@@ -5,7 +5,7 @@ signal sprint_ended
 
 func _enter() -> void:
 	sprint_started.emit()
-	print(name)
+	animation_state_changed.emit("Sprint")
 
 func _state_input(_event: InputEvent) -> void:
 	if _event.is_action_pressed("jump"):

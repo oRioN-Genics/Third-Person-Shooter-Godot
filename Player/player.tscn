@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dgeuotcndp8ym" path="res://Player/player.gd" id="1_l8h54"]
 [ext_resource type="Script" uid="uid://kfo6xjkr7oc3" path="res://Player/camera.gd" id="2_4ntmi"]
+[ext_resource type="PackedScene" uid="uid://bmr2d5oo2pfgy" path="res://Assets/character_model/character_model.tscn" id="2_gu6f8"]
 [ext_resource type="Script" uid="uid://dn7nx33rllxbn" path="res://Player/StateMachine/PlayerStateMachine/player_state_machine.gd" id="3_vtle1"]
 [ext_resource type="Script" uid="uid://xop3ims3663j" path="res://Player/StateMachine/PlayerStateMachine/States/idle.gd" id="4_od3ui"]
 [ext_resource type="Script" uid="uid://cqa85skjb128t" path="res://Player/movement_stats.gd" id="4_p5o4e"]
@@ -15,9 +16,8 @@
 [ext_resource type="Script" uid="uid://c6i750c1wftes" path="res://Player/StateMachine/PlayerStateMachine/States/sprint_fall.gd" id="10_apopc"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_62w18"]
-radius = 0.8
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_8a836"]
+radius = 0.5830078
+height = 1.9224854
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_4ntmi"]
 margin = 0.01
@@ -37,34 +37,38 @@ collision_layer = 2
 script = ExtResource("1_l8h54")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9447529, 0)
 shape = SubResource("CapsuleShape3D_62w18")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("CapsuleMesh_8a836")
+[node name="CharacterModel" parent="." instance=ExtResource("2_gu6f8")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
 
 [node name="Camera" type="Node3D" parent="." node_paths=PackedStringArray("character", "edge_spring_arm", "rear_spring_arm", "camera")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 script = ExtResource("2_4ntmi")
 character = NodePath("..")
 edge_spring_arm = NodePath("EdgeSpringArm")
 rear_spring_arm = NodePath("EdgeSpringArm/RearSpringArm")
 camera = NodePath("EdgeSpringArm/RearSpringArm/Camera3D")
+aim_rear_spring_length = 0.3
+aim_edge_spring_length = 0.3
 
 [node name="EdgeSpringArm" type="SpringArm3D" parent="Camera"]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 0, 0, 0)
 shape = SubResource("SphereShape3D_4ntmi")
+spring_length = 0.5
 
 [node name="RearSpringArm" type="SpringArm3D" parent="Camera/EdgeSpringArm"]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, 0)
 shape = SubResource("SphereShape3D_btcbx")
-spring_length = 1.5
 
 [node name="Camera3D" type="Camera3D" parent="Camera/EdgeSpringArm/RearSpringArm"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 1.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 1)
 
-[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("start_state")]
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("character_model", "start_state")]
 script = ExtResource("3_vtle1")
 player_movement_stats = SubResource("Resource_gu6f8")
+character_model = NodePath("../CharacterModel")
 start_state = NodePath("Idle")
 
 [node name="Idle" type="Node" parent="StateMachine"]
