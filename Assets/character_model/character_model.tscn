@@ -65,6 +65,10 @@ animation_tree = NodePath("AnimationTree")
 
 [node name="universal_char_model" parent="." instance=ExtResource("2_70etq")]
 
+[node name="Armeture" parent="universal_char_model" index="0"]
+
+[node name="Skeleton3D" parent="universal_char_model/Armeture" index="0"]
+
 [node name="AnimationTree" type="AnimationTree" parent="."]
 root_node = NodePath("../universal_char_model")
 tree_root = SubResource("AnimationNodeBlendTree_rvvkx")
