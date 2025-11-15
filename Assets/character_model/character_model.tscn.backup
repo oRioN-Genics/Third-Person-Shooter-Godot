@@ -1,0 +1,76 @@
+[gd_scene load_steps=10 format=3 uid="uid://bmr2d5oo2pfgy"]
+
+[ext_resource type="Script" uid="uid://bxf0ay2m6ron3" path="res://Assets/character_model/character_model.gd" id="1_70etq"]
+[ext_resource type="PackedScene" uid="uid://bm6b5q1773of5" path="res://Assets/character_model/alien_soldier.fbx" id="2_70etq"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_70etq"]
+animation = &"weight_shift_idle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_5e4b4"]
+animation = &"falling_idle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_422nd"]
+animation = &"slow_run"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_obvr4"]
+animation = &"fast_run"
+
+[sub_resource type="AnimationNodeTransition" id="AnimationNodeTransition_7b78d"]
+sync = true
+xfade_time = 0.2
+input_0/name = "Idle"
+input_0/auto_advance = false
+input_0/break_loop_at_end = false
+input_0/reset = true
+input_1/name = "Walk"
+input_1/auto_advance = false
+input_1/break_loop_at_end = false
+input_1/reset = true
+input_2/name = "Run"
+input_2/auto_advance = false
+input_2/break_loop_at_end = false
+input_2/reset = true
+input_3/name = "Sprint"
+input_3/auto_advance = false
+input_3/break_loop_at_end = false
+input_3/reset = true
+input_4/name = "Jump"
+input_4/auto_advance = false
+input_4/break_loop_at_end = false
+input_4/reset = true
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_j6fbt"]
+animation = &"walking"
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_rvvkx"]
+graph_offset = Vector2(-487, 38)
+nodes/output/position = Vector2(440, 60)
+nodes/walk/node = SubResource("AnimationNodeAnimation_j6fbt")
+nodes/walk/position = Vector2(-260, 160)
+nodes/unarmed_movement/node = SubResource("AnimationNodeTransition_7b78d")
+nodes/unarmed_movement/position = Vector2(100, 80)
+nodes/idle/node = SubResource("AnimationNodeAnimation_70etq")
+nodes/idle/position = Vector2(-220, 60)
+nodes/run/node = SubResource("AnimationNodeAnimation_422nd")
+nodes/run/position = Vector2(-220, 280)
+nodes/sprint/node = SubResource("AnimationNodeAnimation_obvr4")
+nodes/sprint/position = Vector2(-280, 380)
+nodes/in_air/node = SubResource("AnimationNodeAnimation_5e4b4")
+nodes/in_air/position = Vector2(-240, 500)
+node_connections = [&"output", 0, &"unarmed_movement", &"unarmed_movement", 0, &"idle", &"unarmed_movement", 1, &"walk", &"unarmed_movement", 2, &"run", &"unarmed_movement", 3, &"sprint", &"unarmed_movement", 4, &"in_air"]
+
+[node name="CharacterModel" type="Node3D" node_paths=PackedStringArray("animation_tree")]
+script = ExtResource("1_70etq")
+animation_tree = NodePath("AnimationTree")
+
+[node name="alien_soldier" parent="." instance=ExtResource("2_70etq")]
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+root_node = NodePath("../alien_soldier")
+tree_root = SubResource("AnimationNodeBlendTree_rvvkx")
+anim_player = NodePath("../alien_soldier/AnimationPlayer")
+parameters/unarmed_movement/current_state = "Idle"
+parameters/unarmed_movement/transition_request = ""
+parameters/unarmed_movement/current_index = 0
+
+[editable path="alien_soldier"]
