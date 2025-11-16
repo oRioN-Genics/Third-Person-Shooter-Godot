@@ -1,7 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://bmr2d5oo2pfgy"]
+[gd_scene load_steps=11 format=3 uid="uid://bmr2d5oo2pfgy"]
 
 [ext_resource type="Script" uid="uid://bxf0ay2m6ron3" path="res://Assets/character_model/character_model.gd" id="1_70etq"]
 [ext_resource type="PackedScene" uid="uid://dhuxgfacli73q" path="res://Assets/character_model/universal_char_model.fbx" id="2_70etq"]
+[ext_resource type="PackedScene" uid="uid://bm6b5q1773of5" path="res://Assets/character_model/alien_soldier.fbx" id="3_5e4b4"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_70etq"]
 animation = &"weight_shift_idle"
@@ -43,7 +44,7 @@ input_4/reset = true
 animation = &"walking"
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_rvvkx"]
-graph_offset = Vector2(-487, 38)
+graph_offset = Vector2(-463.7273, 38.363617)
 nodes/output/position = Vector2(440, 60)
 nodes/walk/node = SubResource("AnimationNodeAnimation_j6fbt")
 nodes/walk/position = Vector2(-260, 160)
@@ -62,19 +63,13 @@ node_connections = [&"output", 0, &"unarmed_movement", &"unarmed_movement", 0, &
 [node name="CharacterModel" type="Node3D" node_paths=PackedStringArray("animation_tree")]
 script = ExtResource("1_70etq")
 animation_tree = NodePath("AnimationTree")
-
-[node name="universal_char_model" parent="." instance=ExtResource("2_70etq")]
-
-[node name="Armeture" parent="universal_char_model" index="0"]
-
-[node name="Skeleton3D" parent="universal_char_model/Armeture" index="0"]
+model_scenes = {
+"alien": ExtResource("3_5e4b4"),
+"universal": ExtResource("2_70etq")
+}
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
-root_node = NodePath("../universal_char_model")
 tree_root = SubResource("AnimationNodeBlendTree_rvvkx")
-anim_player = NodePath("../universal_char_model/AnimationPlayer")
 parameters/unarmed_movement/current_state = "Idle"
 parameters/unarmed_movement/transition_request = ""
 parameters/unarmed_movement/current_index = 0
-
-[editable path="universal_char_model"]
