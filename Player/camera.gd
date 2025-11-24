@@ -17,6 +17,7 @@ extends Node3D
 var camera_rotation: Vector2 = Vector2.ZERO
 var mouse_sensitivity: float = 0.001
 var max_y_rotation: float = 1.2
+var _is_local: bool = false
 
 var camera_tween: Tween
 
@@ -31,7 +32,18 @@ func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
+func set_is_local(value: bool) -> void:
+	_is_local = value
+	set_process(value)
+	set_physics_process(value)
+	set_process_input(value)
+	set_process_unhandled_input(value)
+
+
 func _input(event: InputEvent) -> void:
+	if not _is_local:
+		return
+
 	if event.is_action_pressed("ui_cancel"):
 		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
