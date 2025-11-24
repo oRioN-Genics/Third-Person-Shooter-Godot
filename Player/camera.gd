@@ -34,10 +34,18 @@ func _ready() -> void:
 
 func set_is_local(value: bool) -> void:
 	_is_local = value
+
 	set_process(value)
 	set_physics_process(value)
 	set_process_input(value)
 	set_process_unhandled_input(value)
+
+	if camera:
+		if value:
+			camera.make_current()
+		else:
+			if camera.current:
+				camera.current = false
 
 
 func _input(event: InputEvent) -> void:
