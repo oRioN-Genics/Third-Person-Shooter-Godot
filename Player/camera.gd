@@ -30,6 +30,7 @@ var current_camera_alignment: int = CameraAlignment.RIGHT
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
+
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
@@ -44,6 +45,7 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("swap_camera_alignment"):
 		swap_camera_alignment()
 
+
 func camera_look(mouse_movement: Vector2) -> void:
 	camera_rotation += mouse_movement
 
@@ -54,6 +56,7 @@ func camera_look(mouse_movement: Vector2) -> void:
 	rotate_object_local(Vector3(1, 0, 0), -camera_rotation.y)
 
 	camera_rotation.y = clamp(camera_rotation.y, -max_y_rotation, max_y_rotation)
+
 
 func swap_camera_alignment() -> void:
 	match current_camera_alignment:
@@ -67,8 +70,10 @@ func swap_camera_alignment() -> void:
 	var new_pos = default_edge_spring_arm_length * current_camera_alignment
 	set_rear_spring_arm_position(new_pos, camera_alignment_speed)
 
+
 func set_current_camera_alignment(alignment: CameraAlignment) -> void:
 	current_camera_alignment = alignment
+
 
 func set_rear_spring_arm_position(pos: float, speed: float) -> void:
 	if camera_tween:
@@ -78,6 +83,7 @@ func set_rear_spring_arm_position(pos: float, speed: float) -> void:
 	camera_tween.set_trans(Tween.TRANS_EXPO)
 	camera_tween.set_ease(Tween.EASE_OUT)
 	camera_tween.tween_property(edge_spring_arm, "spring_length", pos, speed)
+
 
 func enter_aim() -> void:
 	if camera_tween:
@@ -91,6 +97,7 @@ func enter_aim() -> void:
 	camera_tween.tween_property(edge_spring_arm, "spring_length", aim_edge_spring_length * current_camera_alignment, aim_Speed)
 	camera_tween.tween_property(rear_spring_arm, "spring_length", aim_rear_spring_length, aim_Speed)
 
+
 func exit_aim() -> void:
 	if camera_tween:
 		camera_tween.kill()
@@ -103,6 +110,7 @@ func exit_aim() -> void:
 	camera_tween.tween_property(edge_spring_arm, "spring_length", default_edge_spring_arm_length * current_camera_alignment, aim_Speed)
 	camera_tween.tween_property(rear_spring_arm, "spring_length", default_rear_spring_arm_length, aim_Speed)
 
+
 func enter_sprint() -> void:
 	if camera_tween:
 		camera_tween.kill()
@@ -114,6 +122,7 @@ func enter_sprint() -> void:
 	camera_tween.tween_property(camera, "fov", sprint_fov, sprint_tween_speed)
 	camera_tween.tween_property(edge_spring_arm, "spring_length", default_edge_spring_arm_length * current_camera_alignment, aim_Speed)
 	camera_tween.tween_property(rear_spring_arm, "spring_length", default_rear_spring_arm_length, aim_Speed)
+
 
 func exit_sprint() -> void:
 	if camera_tween:
@@ -131,11 +140,14 @@ func exit_sprint() -> void:
 func _on_sprint_sprint_started() -> void:
 	enter_sprint()
 
+
 func _on_sprint_ended() -> void:
 	exit_sprint()
 
+
 func _on_aim_entered() -> void:
 	enter_aim()
+
 
 func _on_aim_exited() -> void:
 	exit_aim()

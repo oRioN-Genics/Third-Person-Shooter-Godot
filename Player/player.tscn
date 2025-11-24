@@ -16,7 +16,7 @@
 [ext_resource type="Script" uid="uid://c6i750c1wftes" path="res://Player/StateMachine/PlayerStateMachine/States/sprint_fall.gd" id="10_apopc"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_62w18"]
-radius = 0.5830078
+radius = 0.42578125
 height = 1.9224854
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_4ntmi"]
@@ -34,6 +34,7 @@ metadata/_custom_type_script = "uid://cqa85skjb128t"
 
 [node name="Player" type="CharacterBody3D"]
 collision_layer = 2
+collision_mask = 3
 script = ExtResource("1_l8h54")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
