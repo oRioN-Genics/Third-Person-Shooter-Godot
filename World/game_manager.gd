@@ -1,7 +1,7 @@
 extends Node3D
 
 @export var player_scene: PackedScene
-@export var number_of_players: int = 20
+@export var number_of_players: int = 10
 @export var local_player_id: int = 1
 
 var players: Array[Player] = []

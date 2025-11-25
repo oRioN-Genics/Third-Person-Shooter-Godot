@@ -12,7 +12,7 @@ func _state_input(_event: InputEvent) -> void:
 		aim_exited.emit()
 		finished.emit("Jump")
 
-	if _event.is_action_pressed("sprint") and sprint_remaining > 0.5:
+	if _event.is_action_pressed("sprint") and owner.sprint_remaining > 0.5:
 		aim_exited.emit()
 		finished.emit("Sprint")
 

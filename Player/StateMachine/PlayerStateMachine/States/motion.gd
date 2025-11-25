@@ -14,12 +14,10 @@ var fall_gravity: float
 var input_dir: Vector2 = Vector2.ZERO
 var direction: Vector3 = Vector3.ZERO
 var velocity: Vector3 = Vector3.ZERO
-var sprint_remaining: float = 0.0
 
 const PLAYER_MOVEMENT_STATS = preload("res://Player/player_movement_stats.tres")
 
 func _ready() -> void:
-	sprint_remaining = PLAYER_MOVEMENT_STATS.sprint_duration
 	velocity_updated.connect(owner.set_velocity_from_motion)
 	speed = PLAYER_MOVEMENT_STATS.get_velocity(PLAYER_MOVEMENT_STATS.jump_distance, PLAYER_MOVEMENT_STATS.time_to_jump_apex + PLAYER_MOVEMENT_STATS.time_to_land)
 	sprint_speed = PLAYER_MOVEMENT_STATS.get_velocity(PLAYER_MOVEMENT_STATS.sprint_jump_distance, PLAYER_MOVEMENT_STATS.time_to_jump_apex + PLAYER_MOVEMENT_STATS.time_to_land)
@@ -53,4 +51,9 @@ func is_on_floor() -> bool:
 
 
 func replenish_sprint(delta: float) -> void:
-	sprint_remaining = min(sprint_remaining + delta, PLAYER_MOVEMENT_STATS.sprint_duration)
+	if not ("sprint_remaining" in owner):
+		return
+	owner.sprint_remaining = min(
+		owner.sprint_remaining + delta,
+		PLAYER_MOVEMENT_STATS.sprint_duration
+	)

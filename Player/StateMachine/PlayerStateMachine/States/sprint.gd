@@ -19,9 +19,9 @@ func _update(delta: float) -> void:
 	set_direction()
 	calculate_velocity(sprint_speed, direction, PLAYER_MOVEMENT_STATS.acceleration, delta)
 
-	sprint_remaining -= delta
+	owner.sprint_remaining -= delta
 
-	if sprint_remaining <= 0:
+	if owner.sprint_remaining <= 0:
 		sprint_ended.emit()
 		finished.emit("Run")
 

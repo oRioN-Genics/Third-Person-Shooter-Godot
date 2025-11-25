@@ -3,6 +3,7 @@ class_name Player
 
 @export var player_id: int = -1
 var is_local_player: bool = false
+var sprint_remaining: float = 0.0
 
 const PLAYER_MOVEMENT_STATS := preload("res://Player/player_movement_stats.tres")
 
@@ -15,7 +16,7 @@ const PLAYER_MOVEMENT_STATS := preload("res://Player/player_movement_stats.tres"
 
 
 func _ready() -> void:
-	pass
+	sprint_remaining = PLAYER_MOVEMENT_STATS.sprint_duration
 
 
 func setup(id: int, is_local: bool) -> void:

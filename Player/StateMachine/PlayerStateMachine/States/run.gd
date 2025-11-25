@@ -7,7 +7,7 @@ func _state_input(_event: InputEvent) -> void:
     if _event.is_action_pressed("jump"):
         finished.emit("Jump")
 
-    if _event.is_action_pressed("sprint") and sprint_remaining > PLAYER_MOVEMENT_STATS.minimum_sprint_threshold:
+    if _event.is_action_pressed("sprint") and owner.sprint_remaining > PLAYER_MOVEMENT_STATS.minimum_sprint_threshold:
         finished.emit("Sprint")
 
     if _event.is_action_pressed("aim"):
