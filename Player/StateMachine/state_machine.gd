@@ -7,6 +7,7 @@ var state_map: Dictionary
 var current_state: State = null
 var _active: bool = false:
 	set = _set_active
+var _input_enabled: bool = true
 
 func _ready() -> void:
 	_create_state_map()
@@ -14,7 +15,7 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if not _active or current_state == null:
+	if not _active or not _input_enabled or current_state == null:
 		return
 	current_state._state_input(event)
 
@@ -50,6 +51,14 @@ func _set_active(value: bool) -> void:
 	
 	if not _active:
 		current_state = null
+
+
+func set_input_enabled(enabled: bool) -> void:
+	_input_enabled = enabled
+
+
+func change_state_to(state_name: String) -> void:
+	_change_state(state_name)
 
 
 func _change_state(state_name: String) -> void:
