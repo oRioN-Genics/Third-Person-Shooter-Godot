@@ -44,15 +44,38 @@ func apply_remote_input(input_data: Dictionary) -> void:
 		return
 
 	var move: Vector3 = input_data.get("move", Vector3.ZERO)
+	var do_jump: bool = input_data.get("jump", false)
 
+	# Normalize move vector if needed
 	if move.length() > 1.0:
 		move = move.normalized()
 
+	# Horizontal movement using the same run_speed as local
 	var speed := run_speed
 	velocity.x = move.x * speed
 	velocity.z = move.z * speed
 
-	var target_state := "Run" if move.length() > 0.1 else "Idle"
+	# Face movement direction if moving
+	if move.length() > 0.1:
+		var yaw := atan2(move.x, move.z) + PI
+		var basis := global_transform.basis
+		basis = Basis(Vector3.UP, yaw)
+		global_transform.basis = basis
+
+	# Jump impulse if requested and on the floor
+	if do_jump and is_on_floor():
+		var jump_gravity := PLAYER_MOVEMENT_STATS.get_jump_gravity()
+		var jump_vel := PLAYER_MOVEMENT_STATS.get_jump_velocity(jump_gravity)
+		velocity.y = jump_vel
+
+	# Decide animation/state
+	var target_state := "Idle"
+
+	if not is_on_floor():
+		# In air: distinguish going up vs falling
+		target_state = "Jump" if velocity.y > 0.0 else "Fall"
+	elif move.length() > 0.1:
+		target_state = "Run"
 
 	if state_machine.current_state == null \
 	or state_machine.current_state.name != target_state:
