@@ -36,6 +36,10 @@ func _initialize(state: State) -> void:
 	current_state._enter()
 
 
+func set_active(active: bool) -> void:
+	_set_active(active)
+
+
 func _set_active(value: bool) -> void:
 	if _active == value:
 		return

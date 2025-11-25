@@ -1,9 +1,11 @@
 extends Node3D
 
 @export var player_scene: PackedScene
-@export var number_of_players: int = 2
+@export var number_of_players: int = 4
+@export var local_player_id: int = 1
 
-var players: Array = []
+var players: Array[Player] = []
+var players_by_id: Dictionary = {}
 
 func _ready() -> void:
 	spawn_players()
@@ -13,13 +15,29 @@ func spawn_players() -> void:
 	for p in players:
 		p.queue_free()
 	players.clear()
+	players_by_id.clear()
 
 	for i in range(number_of_players):
-		var player: CharacterBody3D = player_scene.instantiate()
+		var id := i + 1
+		print("Spawning player id=", id)
+		var player: Player = player_scene.instantiate()
 
 		player.position = Vector3(2 * i, 0, 0)
 
-		player.is_local_player = (i == 1)
+		var is_local := (id == local_player_id)
 
 		add_child(player)
+		player.setup(id, is_local)
+		
 		players.append(player)
+		players_by_id[id] = player
+
+
+func get_player(id: int) -> Player:
+	return players_by_id.get(id, null)
+
+
+func apply_remote_input_to_player(player_id: int, input_data: Dictionary) -> void:
+	var p := get_player(player_id)
+	if p:
+		p.apply_remote_input(input_data)
