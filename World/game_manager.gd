@@ -96,7 +96,7 @@ func simulate_remote_players(delta: float) -> void:
 				ai_state.state = "jump"
 				# Keep last dir or stand still; your choice:
 				# ai_state.dir = Vector3.ZERO
-				ai_state.time_left = randf_range(0.2, 0.5)
+				ai_state.time_left = randf_range(0.2, 1.0)
 
 		var input_data := {
 			"move": ai_state.dir,
