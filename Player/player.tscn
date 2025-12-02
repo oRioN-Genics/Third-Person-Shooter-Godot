@@ -16,8 +16,8 @@
 [ext_resource type="Script" uid="uid://c6i750c1wftes" path="res://Player/StateMachine/PlayerStateMachine/States/sprint_fall.gd" id="10_apopc"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_62w18"]
-radius = 0.42578125
-height = 1.9224854
+radius = 0.59
+height = 1.9
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_4ntmi"]
 margin = 0.01
@@ -38,7 +38,7 @@ collision_mask = 3
 script = ExtResource("1_l8h54")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9447529, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.96194464, 0)
 shape = SubResource("CapsuleShape3D_62w18")
 
 [node name="CharacterModel" parent="." instance=ExtResource("2_gu6f8")]

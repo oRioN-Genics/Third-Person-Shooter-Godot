@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://88bdrx2vtcv1"]
+[gd_scene load_steps=11 format=3 uid="uid://88bdrx2vtcv1"]
 
 [ext_resource type="Material" uid="uid://dsuynhivkfwbs" path="res://Assets/kenney_prototype-textures/prototype_texture_dark.tres" id="1_62w18"]
 [ext_resource type="PackedScene" uid="uid://crnuwgiiri5ix" path="res://Player/player.tscn" id="2_8a836"]
@@ -23,6 +23,15 @@ size = Vector3(1, 0.5, 3)
 [sub_resource type="BoxShape3D" id="BoxShape3D_j8job"]
 size = Vector3(1, 0.5, 3)
 
+[sub_resource type="CylinderMesh" id="CylinderMesh_j8job"]
+top_radius = 2.0
+bottom_radius = 2.0
+height = 10.0
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_j8job"]
+height = 10.0
+radius = 2.0
+
 [node name="World" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -33,17 +42,28 @@ transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545
 shadow_enabled = true
 
 [node name="CSGCombiner3D" type="CSGCombiner3D" parent="."]
+visible = false
 use_collision = true
 
 [node name="CSGBox3D" type="CSGBox3D" parent="CSGCombiner3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.7003598, 0)
+visible = false
 size = Vector3(30, 5.50072, 30)
 material = ExtResource("1_62w18")
 
 [node name="CSGBox3D2" type="CSGBox3D" parent="CSGCombiner3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.0304868, 0)
+visible = false
 operation = 2
 size = Vector3(29, 5.960974, 29)
+material = ExtResource("1_62w18")
+
+[node name="CSGCombiner3D2" type="CSGCombiner3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.174414, 0, 0)
+use_collision = true
+
+[node name="CSGBox3D" type="CSGBox3D" parent="CSGCombiner3D2"]
+size = Vector3(100, 0.1, 100)
 material = ExtResource("1_62w18")
 
 [node name="GameManager" type="Node3D" parent="."]
@@ -87,3 +107,13 @@ mesh = SubResource("BoxMesh_8a836")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Items/StaticBody3D3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
 shape = SubResource("BoxShape3D_j8job")
+
+[node name="StaticBody3D4" type="StaticBody3D" parent="Items"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Items/StaticBody3D4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 8)
+mesh = SubResource("CylinderMesh_j8job")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Items/StaticBody3D4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0, 8)
+shape = SubResource("CylinderShape3D_j8job")

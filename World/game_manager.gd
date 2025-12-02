@@ -1,7 +1,7 @@
 extends Node3D
 
 @export var player_scene: PackedScene
-@export var number_of_players: int = 10
+@export var number_of_players: int = 50
 @export var local_player_id: int = 1
 
 var players: Array[Player] = []
@@ -27,7 +27,7 @@ func spawn_players() -> void:
 		print("Spawning player id=", id)
 		var player: Player = player_scene.instantiate()
 
-		player.position = Vector3(1.1 * i, 0, 0)
+		player.position = Vector3(2 * i, 0, 0)
 
 		var is_local := (id == local_player_id)
 
@@ -43,6 +43,9 @@ func spawn_players() -> void:
 				"state": "idle",
 				"time_left": 0.0,
 				"dir": Vector3.ZERO,
+				"target_dir": Vector3.ZERO,
+				"jump_queued": false,
+				"sprint": false,
 			}
 
 
@@ -56,8 +59,8 @@ func apply_remote_input_to_player(player_id: int, input_data: Dictionary) -> voi
 		p.apply_remote_input(input_data)
 
 
-# remote players simulation - just for testing
-var remote_ai: Dictionary = {} # id -> { state, time_left, dir }
+# remote players simulation
+var remote_ai: Dictionary = {}
 
 func simulate_remote_players(delta: float) -> void:
 	for id in players_by_id.keys():
@@ -66,41 +69,66 @@ func simulate_remote_players(delta: float) -> void:
 
 		var p: Player = players_by_id[id]
 
-		var ai_state = remote_ai.get(id, null)
-		if ai_state == null:
+		var ai_state: Dictionary = remote_ai.get(id, {})
+		if ai_state.is_empty():
 			ai_state = {
 				"state": "idle",
 				"time_left": 0.0,
 				"dir": Vector3.ZERO,
+				"target_dir": Vector3.ZERO,
+				"jump_queued": false,
+				"sprint": false,
 			}
 			remote_ai[id] = ai_state
 
-		# Decrease timer
-		ai_state.time_left -= delta
-		if ai_state.time_left <= 0.0:
-			# Pick a new behavior
+		ai_state["time_left"] -= delta
+		if ai_state["time_left"] <= 0.0:
 			var r := randf()
 			if r < 0.4:
-				# Idle
-				ai_state.state = "idle"
-				ai_state.dir = Vector3.ZERO
-				ai_state.time_left = randf_range(0.5, 2.0)
-			elif r < 0.85:
-				# Run in a random direction
-				ai_state.state = "run"
+				ai_state["state"] = "idle"
+				ai_state["target_dir"] = Vector3.ZERO
+				ai_state["time_left"] = randf_range(0.5, 2.0)
+				ai_state["jump_queued"] = false
+				ai_state["sprint"] = false
+
+			elif r < 0.7:
+				ai_state["state"] = "run"
 				var angle := randf_range(0.0, TAU)
-				ai_state.dir = Vector3(sin(angle), 0.0, cos(angle))
-				ai_state.time_left = randf_range(1.0, 3.0)
+				ai_state["target_dir"] = Vector3(sin(angle), 0.0, cos(angle))
+				ai_state["time_left"] = randf_range(1.0, 3.0)
+				ai_state["jump_queued"] = false
+				ai_state["sprint"] = false
+
+			elif r < 0.9:
+				ai_state["state"] = "sprint"
+				var angle2 := randf_range(0.0, TAU)
+				ai_state["target_dir"] = Vector3(sin(angle2), 0.0, cos(angle2))
+				ai_state["time_left"] = randf_range(0.8, 2.0)
+				ai_state["jump_queued"] = false
+				ai_state["sprint"] = true
+
 			else:
-				# Jump (quick action)
-				ai_state.state = "jump"
-				# Keep last dir or stand still; your choice:
-				# ai_state.dir = Vector3.ZERO
-				ai_state.time_left = randf_range(0.2, 1.0)
+				ai_state["state"] = "sprint"
+				ai_state["time_left"] = randf_range(0.4, 1.0)
+				ai_state["jump_queued"] = true
+				ai_state["sprint"] = true
+
+				if ai_state["target_dir"] == Vector3.ZERO:
+					var angle3 := randf_range(0.0, TAU)
+					ai_state["target_dir"] = Vector3(sin(angle3), 0.0, cos(angle3))
+
+		var lerp_factor := 0.12
+		var current_dir: Vector3 = ai_state["dir"]
+		var target_dir: Vector3 = ai_state["target_dir"]
+		ai_state["dir"] = current_dir.lerp(target_dir, lerp_factor)
+
+		var do_jump: bool = ai_state["jump_queued"]
+		ai_state["jump_queued"] = false
 
 		var input_data := {
-			"move": ai_state.dir,
-			"jump": ai_state.state == "jump",
+			"move": ai_state["dir"],
+			"jump": do_jump,
+			"sprint": ai_state.get("sprint", false),
 		}
 
 		p.apply_remote_input(input_data)

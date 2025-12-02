@@ -11,6 +11,10 @@ const PLAYER_MOVEMENT_STATS := preload("res://Player/player_movement_stats.tres"
 	PLAYER_MOVEMENT_STATS.jump_distance,
 	PLAYER_MOVEMENT_STATS.time_to_jump_apex + PLAYER_MOVEMENT_STATS.time_to_land
 )
+@onready var sprint_speed: float = PLAYER_MOVEMENT_STATS.get_velocity(
+	PLAYER_MOVEMENT_STATS.sprint_jump_distance,
+	PLAYER_MOVEMENT_STATS.time_to_jump_apex + PLAYER_MOVEMENT_STATS.time_to_land
+)
 @onready var state_machine: StateMachine = $StateMachine
 @onready var camera_node: Node3D = $Camera
 
@@ -46,37 +50,44 @@ func apply_remote_input(input_data: Dictionary) -> void:
 
 	var move: Vector3 = input_data.get("move", Vector3.ZERO)
 	var do_jump: bool = input_data.get("jump", false)
+	var is_sprinting: bool = input_data.get("sprint", false)
 
-	# Normalize move vector if needed
 	if move.length() > 1.0:
 		move = move.normalized()
 
-	# Horizontal movement using the same run_speed as local
-	var speed := run_speed
+	var remote_speed_multiplier := 0.55
+
+	var base_speed: float = run_speed
+	if is_sprinting:
+		base_speed = sprint_speed
+
+	var speed := base_speed * remote_speed_multiplier
+
 	velocity.x = move.x * speed
 	velocity.z = move.z * speed
 
-	# Face movement direction if moving
 	if move.length() > 0.1:
-		var yaw := atan2(move.x, move.z) + PI
-		var basis := global_transform.basis
-		basis = Basis(Vector3.UP, yaw)
-		global_transform.basis = basis
+		var target_yaw := atan2(move.x, move.z) + PI
+		var current_basis := global_transform.basis
+		var current_yaw := current_basis.get_euler().y
 
-	# Jump impulse if requested and on the floor
+		var new_yaw := lerp_angle(current_yaw, target_yaw, 0.15)
+		global_transform.basis = Basis(Vector3.UP, new_yaw)
+
 	if do_jump and is_on_floor():
 		var jump_gravity := PLAYER_MOVEMENT_STATS.get_jump_gravity()
 		var jump_vel := PLAYER_MOVEMENT_STATS.get_jump_velocity(jump_gravity)
 		velocity.y = jump_vel
 
-	# Decide animation/state
 	var target_state := "Idle"
 
 	if not is_on_floor():
-		# In air: distinguish going up vs falling
-		target_state = "Jump" if velocity.y > 0.0 else "Fall"
+		if is_sprinting:
+			target_state = "SprintJump" if velocity.y > 0.0 else "Fall"
+		else:
+			target_state = "Jump" if velocity.y > 0.0 else "Fall"
 	elif move.length() > 0.1:
-		target_state = "Run"
+		target_state = "Sprint" if is_sprinting else "Run"
 
 	if state_machine.current_state == null \
 	or state_machine.current_state.name != target_state:
